@@ -5,6 +5,12 @@ import Button from "../../components/button/button.component";
 import "./login.style.scss";
 import { Col, Container, Row } from "react-bootstrap";
 
+import {
+  signInAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth,
+  signInWithGooglePopup,
+} from "../../utils/firebase/firebase.utils";
+
 const defaultFormFields = {
   email: "",
   password: "",
@@ -19,8 +25,20 @@ export default function Login() {
     setFormFields(defaultFormFields);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const signInWithGoogle = async () => {
+    const { user } = await signInWithGooglePopup();
+    await createUserDocumentFromAuth(user);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      await signInAuthUserWithEmailAndPassword(email, password);
+      resetFormFields();
+    } catch (error) {
+      console.log("user sign in failed", error);
+    }
   };
 
   const handleChange = (event) => {
@@ -56,8 +74,13 @@ export default function Login() {
               />
               <div className="buttons-container">
                 <Button type="submit">Sign In</Button>
-                <Button buttonType="google" type="button">
-                  Sign In With Google
+                <Button
+                  buttonType="google"
+                  style={{ width: "100%" }}
+                  type="button"
+                  onClick={signInWithGoogle}
+                >
+                  Google
                 </Button>
               </div>
               <p className="message">

@@ -5,6 +5,11 @@ import FormInput from "../../components/form-input/form-input.component";
 import Button from "../../components/button/button.component";
 import { Col, Container, Row } from "react-bootstrap";
 
+import {
+  createAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth,
+} from '../../utils/firebase/firebase.utils';
+
 const defaultFormFields = {
   displayName: "",
   email: "",
@@ -24,8 +29,24 @@ const SignUp = () => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("passwords do not match");
+      alert('passwords do not match');
       return;
+    }
+
+    try {
+      const { user } = await createAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
+
+      await createUserDocumentFromAuth(user, { displayName });
+      resetFormFields();
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Cannot create user, email already in use');
+      } else {
+        console.log('user creation encountered an error', error);
+      }
     }
   };
 
@@ -34,6 +55,7 @@ const SignUp = () => {
 
     setFormFields({ ...formFields, [name]: value });
   };
+
 
   return (
     <Fragment>
@@ -78,7 +100,7 @@ const SignUp = () => {
                 name="confirmPassword"
                 value={confirmPassword}
               />
-              <Button type="submit">Sign Up</Button>
+              <Button type="submit" style={{ margin: "10px" }}>Sign Up</Button>
             </form>
           </Col>
         </Row>
