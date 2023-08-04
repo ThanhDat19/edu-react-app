@@ -1,0 +1,20 @@
+.center-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .sign-up-container {
+    display: flex;
+    flex-direction: column;
+    width: 380px;
+    border: 2px solid rgb(84, 83, 83);
+    border-radius: 10px;
+    box-shadow: 5px 10px rgb(84, 83, 83);
+    
+    h2 {
+      margin: 10px 0;
+    }
+  }
